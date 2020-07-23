@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
     private MoviesAdapter.ListItemClickListener listener;
     private String BASE_URL = "https://api.themoviedb.org/3/movie/top_rated";
     private String POSTER_BASE_URL = "https://image.tmdb.org/t/p";
-    private String API_KEY = "fa000fe6accc8dfec66fd512859b4b60";
+    private String API_KEY = "API_KEY";
     private RecyclerView movies_rv;
     private MoviesAdapter movies_Adapter;
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         }
         //Toast.makeText(this, BASE_URL, Toast.LENGTH_LONG).show();
         GetMovies getMovies = new GetMovies();
-        getMovies.execute(BASE_URL + "?api_key=fa000fe6accc8dfec66fd512859b4b60");
+        getMovies.execute(BASE_URL + "?api_key=" + API_KEY);
         movies_rv = findViewById(R.id.movies_rv);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
 

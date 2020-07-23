@@ -28,6 +28,7 @@ public class DetailsActivity extends AppCompatActivity {
     public String posterPath;
     public Double ratings;
     private String BASE_URL = "https://api.themoviedb.org/3/movie/";
+    private String API_KEY = "API_KEY";
     private TextView title_tv;
     private TextView overview_tv;
     private TextView release_date_tv;
@@ -65,7 +66,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         @Override
         protected JSONObject doInBackground(String... strings) {
-            String urlString = BASE_URL + strings[0] + "?api_key=fa000fe6accc8dfec66fd512859b4b60";
+            String urlString = BASE_URL + strings[0] + "?api_key=" + API_KEY;
             JSONObject jsonObject = null;
             try {
                 URL url = new URL(urlString);
