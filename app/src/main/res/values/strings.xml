@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Popular Movies</string>
+    <string name="detail_error_message">Movie is not found please check connection and try again later</string>
 </resources>
