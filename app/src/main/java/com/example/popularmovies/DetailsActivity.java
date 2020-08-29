@@ -28,7 +28,7 @@ public class DetailsActivity extends AppCompatActivity {
     public String posterPath;
     public Double ratings;
     private String BASE_URL = "https://api.themoviedb.org/3/movie/";
-    private String API_KEY = "API_KEY";
+    private String API_KEY = "fa000fe6accc8dfec66fd512859b4b60";
     private TextView title_tv;
     private TextView overview_tv;
     private TextView release_date_tv;

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <MultiSelectListPreference
+        android:defaultValue="@android:array/config_keySystemUuidMapping"
+        android:entries="@android:array/config_keySystemUuidMapping"
+        android:entryValues="@android:array/config_keySystemUuidMapping"
+        android:key="multi_select_list_preference_1"
+        android:title="Multi select list preference" />
+</PreferenceScreen>

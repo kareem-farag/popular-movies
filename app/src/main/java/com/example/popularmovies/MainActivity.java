@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
     private MoviesAdapter.ListItemClickListener listener;
     private String BASE_URL = "https://api.themoviedb.org/3/movie/top_rated";
     private String POSTER_BASE_URL = "https://image.tmdb.org/t/p";
-    private String API_KEY = "API_KEY";
+    private String API_KEY = "fa000fe6accc8dfec66fd512859b4b60";
     private RecyclerView movies_rv;
     private MoviesAdapter movies_Adapter;
 
@@ -53,6 +53,13 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         movies_rv.setHasFixedSize(true);
 
         movies_Adapter = new MoviesAdapter(getBaseContext(), movies, this);
+
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
 
     }
 
