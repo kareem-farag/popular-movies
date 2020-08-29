@@ -2,9 +2,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <MultiSelectListPreference
-        android:defaultValue="@android:array/config_keySystemUuidMapping"
-        android:entries="@android:array/config_keySystemUuidMapping"
-        android:entryValues="@android:array/config_keySystemUuidMapping"
+        android:defaultValue="popularity"
+        android:entries="@array/sort_values"
+        android:entryValues="@array/sort_values"
         android:key="multi_select_list_preference_1"
         android:title="Multi select list preference" />
 </PreferenceScreen>
