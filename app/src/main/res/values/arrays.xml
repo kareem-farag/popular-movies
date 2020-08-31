@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="sort_values">
-        <item>Popularity</item>
-        <item>Rating</item>
+        <item>@string/sort_popularity</item>
+        <item>@string/sort_rating</item>
     </array>
     <array name="sort_keys">
-        <item>popularity</item>
-        <item>rating</item>
+        <item>@string/sort_popularity</item>
+        <item>@string/sort_rating</item>
     </array>
 
 </resources>

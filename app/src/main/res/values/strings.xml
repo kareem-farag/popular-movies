@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Popular Movies</string>
     <string name="detail_error_message">Movie is not found please check connection and try again later</string>
+
+    <string name="sort_popularity">Populatity</string>
+    <string name="sort_rating">Rating</string>
 </resources>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <MultiSelectListPreference
-        android:defaultValue="popularity"
-        android:entries="@array/sort_values"
+    <ListPreference
+        android:defaultValue="@string/sort_popularity"
+        android:entries="@array/sort_keys"
         android:entryValues="@array/sort_values"
-        android:key="multi_select_list_preference_1"
-        android:title="Multi select list preference" />
+        android:key="sort_list"
+
+        android:title="Sort By" />
 </PreferenceScreen>

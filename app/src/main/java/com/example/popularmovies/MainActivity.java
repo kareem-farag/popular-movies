@@ -1,8 +1,11 @@
 package com.example.popularmovies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,7 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedHashMap;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapter.ListItemClickListener {
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.ListItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
     public LinkedHashMap<Integer, String> movies = new LinkedHashMap<Integer, String>();
     private MoviesAdapter.ListItemClickListener listener;
     private String BASE_URL = "https://api.themoviedb.org/3/movie/top_rated";
@@ -37,12 +40,23 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ActionBar actionBar = this.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        SharedPreferences sharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreference.registerOnSharedPreferenceChangeListener(this);
+        changeUrlBasedOnSharedPreference(sharedPreference);
+
+        /*
         Intent intent = getIntent();
         if (intent.getExtras() != null && intent.getExtras().getString("url") != null) {
             BASE_URL = intent.getExtras().getString("url");
 
         }
-        //Toast.makeText(this, BASE_URL, Toast.LENGTH_LONG).show();
+        */
+
         GetMovies getMovies = new GetMovies();
         getMovies.execute(BASE_URL + "?api_key=" + API_KEY);
         movies_rv = findViewById(R.id.movies_rv);
@@ -54,6 +68,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
 
         movies_Adapter = new MoviesAdapter(getBaseContext(), movies, this);
 
+    }
+
+    private void changeUrlBasedOnSharedPreference(SharedPreferences sharedPreference) {
+        if (sharedPreference.getString("sort_list", getString(R.string.sort_popularity)).equals(getString(R.string.sort_popularity))) {
+            BASE_URL = "https://api.themoviedb.org/3/movie/popular";
+        } else {
+            BASE_URL = "https://api.themoviedb.org/3/movie/top_rated";
+        }
     }
 
 
@@ -72,6 +94,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.sort) {
+            Intent startSettingActivity = new Intent(this, SettingsActivity.class);
+            startActivity(startSettingActivity);
+            return true;
+        }
+        /*
         String url;
         if ((item.getItemId()) == R.id.top_rated) {
             url = "https://api.themoviedb.org/3/movie/top_rated";
@@ -86,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         movies_rv.setHasFixedSize(true);
 
         movies_Adapter = new MoviesAdapter(getBaseContext(), movies, this);
-
+        */
         return super.onOptionsItemSelected(item);
 
     }
@@ -102,6 +130,13 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
     public void openDetailsActivity() {
         Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
         //startActivity(intent);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        this.finish();
+        Intent refresh = new Intent(this, MainActivity.class);
+        startActivity(refresh);
     }
 
     public class GetMovies extends AsyncTask<String, Void, Void> {
