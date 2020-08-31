@@ -49,13 +49,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         sharedPreference.registerOnSharedPreferenceChangeListener(this);
         changeUrlBasedOnSharedPreference(sharedPreference);
 
-        /*
-        Intent intent = getIntent();
-        if (intent.getExtras() != null && intent.getExtras().getString("url") != null) {
-            BASE_URL = intent.getExtras().getString("url");
 
-        }
-        */
 
         GetMovies getMovies = new GetMovies();
         getMovies.execute(BASE_URL + "?api_key=" + API_KEY);
@@ -99,22 +93,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
             startActivity(startSettingActivity);
             return true;
         }
-        /*
-        String url;
-        if ((item.getItemId()) == R.id.top_rated) {
-            url = "https://api.themoviedb.org/3/movie/top_rated";
-        } else {
-            url = "https://api.themoviedb.org/3/movie/popular";
-        }
-        movies_rv = findViewById(R.id.movies_rv);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
 
-        movies_rv.setLayoutManager(gridLayoutManager);
-
-        movies_rv.setHasFixedSize(true);
-
-        movies_Adapter = new MoviesAdapter(getBaseContext(), movies, this);
-        */
         return super.onOptionsItemSelected(item);
 
     }
@@ -127,10 +106,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         startActivity(intent);
     }
 
-    public void openDetailsActivity() {
-        Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
-        //startActivity(intent);
-    }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
