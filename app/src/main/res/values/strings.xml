@@ -4,4 +4,5 @@
 
     <string name="sort_popularity">Populatity</string>
     <string name="sort_rating">Rating</string>
+    <string name="sort_favorite">Favorite</string>
 </resources>

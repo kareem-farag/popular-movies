@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+
         SharedPreferences sharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreference.registerOnSharedPreferenceChangeListener(this);
         changeUrlBasedOnSharedPreference(sharedPreference);

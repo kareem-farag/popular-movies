@@ -53,6 +53,17 @@
                 android:layout_weight="0"
                 android:padding="5dp"
                 android:text="TextView" />
+
+            <Button
+                android:id="@+id/favorite_button_bv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:background="#FFFFFF"
+                android:foreground="@android:drawable/btn_star_big_on"
+                android:foregroundGravity="left|fill_vertical"
+                android:onClick="favoriteMovie"
+                android:text="Favorite" />
         </LinearLayout>
     </LinearLayout>
 
@@ -62,5 +73,12 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:text="TextView" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/trailers_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#FFEB3B" />
 
 </LinearLayout>
