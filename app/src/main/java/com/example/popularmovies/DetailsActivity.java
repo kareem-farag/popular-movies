@@ -86,7 +86,7 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     public void favoriteMovie(View view) {
-        Movie movie = new Movie(id, posterPath, releaseDate, ratings, overView, true);
+        Movie movie = new Movie(id, title, posterPath, releaseDate, ratings, overView, "true");
         try {
             moviesDatabase.movieDao().insertMovie(movie);
         } catch (Exception e) {

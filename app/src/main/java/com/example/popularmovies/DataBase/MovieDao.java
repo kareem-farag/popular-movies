@@ -14,6 +14,10 @@ public interface MovieDao {
     @Query("SELECT * FROM movie")
     List<Movie> loadAllMovies();
 
+    @Query("SELECT * FROM movie where favorite = 'true' ")
+    List<Movie> loadFavoriteMovies();
+
+
     @Insert
     void insertMovie(Movie movie);
 

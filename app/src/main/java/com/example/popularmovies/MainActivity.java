@@ -13,6 +13,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.example.popularmovies.DataBase.Movie;
+import com.example.popularmovies.DataBase.MoviesDatabase;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.ListItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
     public LinkedHashMap<Integer, String> movies = new LinkedHashMap<Integer, String>();
@@ -34,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
     private String API_KEY = "fa000fe6accc8dfec66fd512859b4b60";
     private RecyclerView movies_rv;
     private MoviesAdapter movies_Adapter;
+    MoviesDatabase moviesDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,17 +49,28 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
+        movies_rv = findViewById(R.id.movies_rv);
 
         SharedPreferences sharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreference.registerOnSharedPreferenceChangeListener(this);
         changeUrlBasedOnSharedPreference(sharedPreference);
+        moviesDatabase = MoviesDatabase.getInstance(getApplicationContext());
+
+        if (BASE_URL.equals(getString(R.string.sort_favorite)) && moviesDatabase.movieDao().loadFavoriteMovies() != null) {
+            List favoriteMovies = moviesDatabase.movieDao().loadFavoriteMovies();
+
+            for (int i = 0; i < favoriteMovies.size(); i++) {
+                Movie movie = (Movie) favoriteMovies.get(i);
+
+                movies.put(Integer.valueOf(movie.getId()), movie.getMoviePoster());
+            }
 
 
+        } else {
+            GetMovies getMovies = new GetMovies();
+            getMovies.execute(BASE_URL + "?api_key=" + API_KEY);
+        }
 
-        GetMovies getMovies = new GetMovies();
-        getMovies.execute(BASE_URL + "?api_key=" + API_KEY);
-        movies_rv = findViewById(R.id.movies_rv);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
 
         movies_rv.setLayoutManager(gridLayoutManager);
@@ -63,14 +79,23 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
 
         movies_Adapter = new MoviesAdapter(getBaseContext(), movies, this);
 
+        if (BASE_URL.equals(getString(R.string.sort_favorite)) && moviesDatabase.movieDao().loadFavoriteMovies() != null) {
+            movies_rv.setAdapter(movies_Adapter);
+        }
     }
 
     private void changeUrlBasedOnSharedPreference(SharedPreferences sharedPreference) {
         if (sharedPreference.getString("sort_list", getString(R.string.sort_popularity)).equals(getString(R.string.sort_popularity))) {
             BASE_URL = "https://api.themoviedb.org/3/movie/popular";
-        } else {
+
+        }
+        if (sharedPreference.getString("sort_list", getString(R.string.sort_popularity)).equals(getString(R.string.sort_rating))) {
             BASE_URL = "https://api.themoviedb.org/3/movie/top_rated";
         }
+        if (sharedPreference.getString("sort_list", getString(R.string.sort_popularity)).equals(getString(R.string.sort_favorite))) {
+            BASE_URL = getString(R.string.sort_favorite);
+        }
+
     }
 
 

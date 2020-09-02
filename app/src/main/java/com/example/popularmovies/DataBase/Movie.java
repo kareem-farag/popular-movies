@@ -1,7 +1,6 @@
 package com.example.popularmovies.DataBase;
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "movie")
@@ -10,25 +9,16 @@ public class Movie {
 
     @PrimaryKey(autoGenerate = true)
     private int databaseId;
-    private int id;
+    private String id;
     private String title;
     private String moviePoster;
     private String releaseDate;
     private Double voteAverage;
     private String plotSynopsis;
-    private Boolean favorite;
+    private String favorite;
 
-    @Ignore
-    public Movie(String title, String moviePoster, String releaseDate, Double voteAverage, String plotSynopsis, Boolean favorite) {
-        this.title = title;
-        this.moviePoster = moviePoster;
-        this.releaseDate = releaseDate;
-        this.voteAverage = voteAverage;
-        this.plotSynopsis = plotSynopsis;
-        this.favorite = favorite;
-    }
 
-    public Movie(int id, String title, String moviePoster, String releaseDate, Double voteAverage, String plotSynopsis, Boolean favorite) {
+    public Movie(String id, String title, String moviePoster, String releaseDate, Double voteAverage, String plotSynopsis, String favorite) {
         this.id = id;
         this.title = title;
         this.moviePoster = moviePoster;
@@ -46,11 +36,11 @@ public class Movie {
         this.databaseId = databaseId;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -94,5 +84,11 @@ public class Movie {
         this.plotSynopsis = plotSynopsis;
     }
 
+    public String getFavorite() {
+        return favorite;
+    }
 
+    public void setFavorite(String favorite) {
+        this.favorite = favorite;
+    }
 }
