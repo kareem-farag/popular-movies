@@ -27,11 +27,11 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.ListItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
-    public LinkedHashMap<Integer, String> movies = new LinkedHashMap<Integer, String>();
+    public List<Movie> movies = new ArrayList<Movie>();
     private MoviesAdapter.ListItemClickListener listener;
     private String BASE_URL = "https://api.themoviedb.org/3/movie/top_rated";
     private String POSTER_BASE_URL = "https://image.tmdb.org/t/p";
@@ -57,12 +57,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         moviesDatabase = MoviesDatabase.getInstance(getApplicationContext());
 
         if (BASE_URL.equals(getString(R.string.sort_favorite)) && moviesDatabase.movieDao().loadFavoriteMovies() != null) {
-            List favoriteMovies = moviesDatabase.movieDao().loadFavoriteMovies();
+            movies = moviesDatabase.movieDao().loadFavoriteMovies();
 
-            for (int i = 0; i < favoriteMovies.size(); i++) {
-                Movie movie = (Movie) favoriteMovies.get(i);
-                movies.put(Integer.valueOf(movie.getId()), movie.getMoviePoster());
-            }
+
 
 
         } else {
@@ -125,8 +122,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
     @Override
     public void onListItemClick(int clickedItemIndex) {
         Intent intent = new Intent(this, DetailsActivity.class);
-        String id = String.valueOf(movies.keySet().toArray()[clickedItemIndex]);
-        intent.putExtra("id", id);
+        intent.putExtra("movie", movies.get(clickedItemIndex));
         startActivity(intent);
     }
 
@@ -161,10 +157,20 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
 
                 JSONObject jsonObject = new JSONObject(buffer.toString());
                 JSONArray jsonArray = jsonObject.getJSONArray("results");
-                JSONObject movie;
+
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    movie = jsonArray.getJSONObject(i);
-                    movies.put(movie.getInt("id"), POSTER_BASE_URL + "/w220_and_h330_face" + movie.getString("poster_path"));
+                    JSONObject movieJsonObject;
+                    movieJsonObject = jsonArray.getJSONObject(i);
+                    Movie movie = new Movie(String.valueOf(movieJsonObject.getInt("id")),
+                            movieJsonObject.getString("title"),
+                            movieJsonObject.getString("poster_path"),
+                            movieJsonObject.getString("release_date"),
+                            Double.valueOf(movieJsonObject.getString("vote_average")),
+                            movieJsonObject.getString("overview"),
+                            "false"
+                    );
+
+                    movies.add(movie);
                 }
 
             } catch (MalformedURLException e) {

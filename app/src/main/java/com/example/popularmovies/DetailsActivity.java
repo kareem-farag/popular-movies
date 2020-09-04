@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 
 public class DetailsActivity extends AppCompatActivity {
     public LinkedHashMap<Integer, String> videos = new LinkedHashMap<Integer, String>();
+    public Movie movie;
 
     public String id;
     public String title;
@@ -62,16 +63,18 @@ public class DetailsActivity extends AppCompatActivity {
         poster_iv = findViewById(R.id.movie_poster_iv);
 
         moviesDatabase = MoviesDatabase.getInstance(getApplicationContext());
-
+        movie = null;
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
-            id = intent.getExtras().getString("id");
+            movie = intent.getParcelableExtra("movie");
         }
-        FetchMovie fetchMovie = new FetchMovie();
-        fetchMovie.execute(id);
+        //FetchMovie fetchMovie = new FetchMovie();
+        //fetchMovie.execute(id);
+        movieUI(movie);
 
         FetchMoviesVideos fetchMoviesVideos = new FetchMoviesVideos();
-        fetchMoviesVideos.execute(id);
+        fetchMoviesVideos.execute(movie.getId());
+
 
         videos_rv = findViewById(R.id.trailers_rv);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
@@ -153,6 +156,35 @@ public class DetailsActivity extends AppCompatActivity {
 
 
         }
+    }
+
+    private void movieUI(Movie movie) {
+        title = movie.getTitle();
+        releaseDate = movie.getReleaseDate();
+        ratings = movie.getVoteAverage();
+        overView = movie.getPlotSynopsis();
+        posterPath = "https://image.tmdb.org/t/p/w185" + movie.getMoviePoster();
+
+        title_tv.setText(title);
+        overview_tv.setText(overView);
+        release_date_tv.setText("Release date : " + releaseDate);
+        rating_tv.setText("Rating : " + ratings);
+        Picasso.with(getBaseContext()).load(posterPath)
+                .error(R.drawable.ic_launcher_background)
+                .placeholder(R.drawable.ic_launcher_background)
+                .into(poster_iv, new Callback() {
+
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+                        // Toast.makeText(getBaseContext(), posterPath, Toast.LENGTH_LONG).show();
+                    }
+                });
+
     }
 
 

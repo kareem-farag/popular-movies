@@ -8,20 +8,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.popularmovies.DataBase.Movie;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.viewHolder> {
 
     final private ListItemClickListener mOnClickListener;
-    private Map<Integer, String> moviesMap;
+    private List<Movie> moviesMap;
     private Context context;
 
-    public MoviesAdapter(Context c, Map<Integer, String> movies, ListItemClickListener listener) {
+    public MoviesAdapter(Context c, List<Movie> movies, ListItemClickListener listener) {
         moviesMap = movies;
         context = c;
         mOnClickListener = listener;
@@ -43,8 +43,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.viewHolder
     @Override
     public void onBindViewHolder(@NonNull viewHolder viewHolder, int position) {
 
+        Movie movie = moviesMap.get(position);
         //   String posterPath = moviesMap.get(position);
-        final String posterPath = (new ArrayList<String>(moviesMap.values())).get(position);
+
+        final String posterPath = "https://image.tmdb.org/t/p/w185" + movie.getMoviePoster();
 
         Picasso.with(context).load(posterPath)
                 .error(R.drawable.ic_launcher_background)
