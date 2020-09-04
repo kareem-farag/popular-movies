@@ -1,6 +1,9 @@
 package com.example.popularmovies;
 
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +32,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedHashMap;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity implements VideosAdapter.ListItemClickListener {
     public LinkedHashMap<Integer, String> videos = new LinkedHashMap<Integer, String>();
     public Movie movie;
 
@@ -51,37 +54,15 @@ public class DetailsActivity extends AppCompatActivity {
 
     private MoviesDatabase moviesDatabase;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
-
-        title_tv = findViewById(R.id.movie_title_tv);
-        overview_tv = findViewById(R.id.movie_plot_tv);
-        release_date_tv = findViewById(R.id.movie_release_date_tv);
-        rating_tv = findViewById(R.id.movie_rating_tv);
-        poster_iv = findViewById(R.id.movie_poster_iv);
-
-        moviesDatabase = MoviesDatabase.getInstance(getApplicationContext());
-        movie = null;
-        Intent intent = getIntent();
-        if (intent.getExtras() != null) {
-            movie = intent.getParcelableExtra("movie");
+    public static void watchYoutubeVideo(Context context, String id) {
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + id));
+        try {
+            context.startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            context.startActivity(webIntent);
         }
-        //FetchMovie fetchMovie = new FetchMovie();
-        //fetchMovie.execute(id);
-        movieUI(movie);
-
-        FetchMoviesVideos fetchMoviesVideos = new FetchMoviesVideos();
-        fetchMoviesVideos.execute(movie.getId());
-
-
-        videos_rv = findViewById(R.id.trailers_rv);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
-
-        videos_rv.setLayoutManager(gridLayoutManager);
-        videos_rv.setHasFixedSize(true);
-        videosAdapter = new VideosAdapter(getBaseContext(), videos);
     }
 
     public void favoriteMovie(View view) {
@@ -99,6 +80,78 @@ public class DetailsActivity extends AppCompatActivity {
     private void closeOnError() {
         finish();
         Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_details);
+
+        title_tv = findViewById(R.id.movie_title_tv);
+        overview_tv = findViewById(R.id.movie_plot_tv);
+        release_date_tv = findViewById(R.id.movie_release_date_tv);
+        rating_tv = findViewById(R.id.movie_rating_tv);
+        poster_iv = findViewById(R.id.movie_poster_iv);
+
+        moviesDatabase = MoviesDatabase.getInstance(getApplicationContext());
+        movie = null;
+        Intent intent = getIntent();
+        if (intent.getExtras() != null) {
+            movie = intent.getParcelableExtra("movie");
+        }
+
+        id = movie.getId();
+        title = movie.getTitle();
+        releaseDate = movie.getReleaseDate();
+        ratings = movie.getVoteAverage();
+        overView = movie.getPlotSynopsis();
+        posterPath = movie.getMoviePoster();
+
+        //FetchMovie fetchMovie = new FetchMovie();
+        //fetchMovie.execute(id);
+        movieUI(movie);
+
+        FetchMoviesVideos fetchMoviesVideos = new FetchMoviesVideos();
+        fetchMoviesVideos.execute(movie.getId());
+
+
+        videos_rv = findViewById(R.id.trailers_rv);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
+
+        videos_rv.setLayoutManager(gridLayoutManager);
+        videos_rv.setHasFixedSize(true);
+        videosAdapter = new VideosAdapter(getBaseContext(), videos, this);
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
+        watchYoutubeVideo(this, videos.get(clickedItemIndex));
+
+    }
+
+    private void movieUI(Movie movie) {
+
+
+        title_tv.setText(title);
+        overview_tv.setText(overView);
+        release_date_tv.setText("Release date : " + releaseDate);
+        rating_tv.setText("Rating : " + ratings);
+        Picasso.with(getBaseContext()).load("https://image.tmdb.org/t/p/w185" + posterPath)
+                .error(R.drawable.ic_launcher_background)
+                .placeholder(R.drawable.ic_launcher_background)
+                .into(poster_iv, new Callback() {
+
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+                        // Toast.makeText(getBaseContext(), posterPath, Toast.LENGTH_LONG).show();
+                    }
+                });
+
     }
 
     protected class FetchMoviesVideos extends AsyncTask<String, Void, Void> {
@@ -125,7 +178,7 @@ public class DetailsActivity extends AppCompatActivity {
                 JSONObject video;
                 for (int i = 0; i < jsonArray.length(); i++) {
                     video = jsonArray.getJSONObject(i);
-                    videos.put(i, "https://www.youtube.com/watch?v=" + video.getString("key"));
+                    videos.put(i, video.getString("key"));
                 }
 
 
@@ -158,103 +211,4 @@ public class DetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void movieUI(Movie movie) {
-        title = movie.getTitle();
-        releaseDate = movie.getReleaseDate();
-        ratings = movie.getVoteAverage();
-        overView = movie.getPlotSynopsis();
-        posterPath = "https://image.tmdb.org/t/p/w185" + movie.getMoviePoster();
-
-        title_tv.setText(title);
-        overview_tv.setText(overView);
-        release_date_tv.setText("Release date : " + releaseDate);
-        rating_tv.setText("Rating : " + ratings);
-        Picasso.with(getBaseContext()).load(posterPath)
-                .error(R.drawable.ic_launcher_background)
-                .placeholder(R.drawable.ic_launcher_background)
-                .into(poster_iv, new Callback() {
-
-                    @Override
-                    public void onSuccess() {
-
-                    }
-
-                    @Override
-                    public void onError() {
-                        // Toast.makeText(getBaseContext(), posterPath, Toast.LENGTH_LONG).show();
-                    }
-                });
-
-    }
-
-
-    protected class FetchMovie extends AsyncTask<String, Void, JSONObject> {
-
-        @Override
-        protected JSONObject doInBackground(String... strings) {
-            String urlString = BASE_URL + strings[0] + "?api_key=" + API_KEY;
-            String videosUrlString = BASE_URL + strings[0] + "/videos?api_key=" + API_KEY;
-            JSONObject jsonObject = null;
-            try {
-                URL url = new URL(urlString);
-                URLConnection urlConnection = url.openConnection();
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer stringBuffer = new StringBuffer();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String ln;
-                while ((ln = bufferedReader.readLine()) != null) {
-                    stringBuffer.append(ln + "\n");
-                }
-                jsonObject = new JSONObject(stringBuffer.toString());
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return jsonObject;
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            super.onPostExecute(jsonObject);
-
-            try {
-                title = jsonObject.getString("original_title");
-                releaseDate = jsonObject.getString("release_date");
-                ratings = jsonObject.getDouble("vote_average");
-                overView = jsonObject.getString("overview");
-                posterPath = "https://image.tmdb.org/t/p/w185" + jsonObject.getString("poster_path");
-
-                title_tv.setText(title);
-                overview_tv.setText(overView);
-                release_date_tv.setText("Release date : " + releaseDate);
-                rating_tv.setText("Rating : " + ratings);
-                Picasso.with(getBaseContext()).load(posterPath)
-                        .error(R.drawable.ic_launcher_background)
-                        .placeholder(R.drawable.ic_launcher_background)
-                        .into(poster_iv, new Callback() {
-
-                            @Override
-                            public void onSuccess() {
-
-                            }
-
-                            @Override
-                            public void onError() {
-                                // Toast.makeText(getBaseContext(), posterPath, Toast.LENGTH_LONG).show();
-                            }
-                        });
-
-                //poster_iv = findViewById(R.id.movie_poster_iv);
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-        }
-    }
 }

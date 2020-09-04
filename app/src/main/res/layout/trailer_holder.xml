@@ -17,7 +17,6 @@
         android:id="@+id/trailer_title_tv"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_weight="1"
-        app:autoSizeTextType="uniform" />
+        android:layout_weight="1" />
 
 </LinearLayout>

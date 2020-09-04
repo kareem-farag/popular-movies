@@ -13,12 +13,16 @@ import java.util.Map;
 
 public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.ViewHolder> {
     //    final private MoviesAdapter.ListItemClickListener mOnClickListener;
+    final private ListItemClickListener vOnClickListener;
+
     private Map<Integer, String> videosMap;
     private Context context;
 
-    public VideosAdapter(Context c, Map<Integer, String> videos) {
+    public VideosAdapter(Context c, Map<Integer, String> videos, ListItemClickListener listener) {
         videosMap = videos;
         context = c;
+        vOnClickListener = listener;
+
     }
 
 
@@ -31,13 +35,16 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.ViewHolder
 
         View view = layoutInflater.inflate(videoLayout, viewGroup, false);
 
-        return new ViewHolder(view);
+        return new ViewHolder(view, vOnClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+        int trailerNumber = 0;
+        trailerNumber++;
         String trailerUrl = (new ArrayList<String>(videosMap.values())).get(i);
-        viewHolder.trailer_title_tv.setText(trailerUrl);
+        viewHolder.trailer_title_tv.setText("Trailer :" + trailerNumber);
+        //trailerUrl
     }
 
     @Override
@@ -49,13 +56,25 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.ViewHolder
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public interface ListItemClickListener {
+        void onListItemClick(int clickedItemIndex);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final TextView trailer_title_tv;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, ListItemClickListener listener) {
             super(itemView);
             trailer_title_tv = itemView.findViewById(R.id.trailer_title_tv);
+            itemView.setOnClickListener(this);
 
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            vOnClickListener.onListItemClick(position);
         }
     }
 }
