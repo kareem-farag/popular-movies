@@ -43,7 +43,7 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
     public String posterPath;
     public Double ratings;
     private String BASE_URL = "https://api.themoviedb.org/3/movie/";
-    private String API_KEY = "fa000fe6accc8dfec66fd512859b4b60";
+    private String API_KEY = "API_KEY";
     private TextView title_tv;
     private TextView overview_tv;
     private TextView release_date_tv;
@@ -53,34 +53,6 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
     private VideosAdapter videosAdapter;
 
     private MoviesDatabase moviesDatabase;
-
-    public static void watchYoutubeVideo(Context context, String id) {
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
-        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://www.youtube.com/watch?v=" + id));
-        try {
-            context.startActivity(appIntent);
-        } catch (ActivityNotFoundException ex) {
-            context.startActivity(webIntent);
-        }
-    }
-
-    public void favoriteMovie(View view) {
-        Movie movie = new Movie(id, title, posterPath, releaseDate, ratings, overView, "true");
-        try {
-            moviesDatabase.movieDao().insertMovie(movie);
-        } catch (Exception e) {
-            Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-
-
-        }
-    }
-
-    private void closeOnError() {
-        finish();
-        Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +94,36 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
         videos_rv.setHasFixedSize(true);
         videosAdapter = new VideosAdapter(getBaseContext(), videos, this);
     }
+
+    public static void watchYoutubeVideo(Context context, String id) {
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + id));
+        try {
+            context.startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            context.startActivity(webIntent);
+        }
+    }
+
+    public void favoriteMovie(View view) {
+        Movie movie = new Movie(id, title, posterPath, releaseDate, ratings, overView, "true");
+        try {
+            moviesDatabase.movieDao().insertMovie(movie);
+        } catch (Exception e) {
+            Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+
+
+        }
+    }
+
+    private void closeOnError() {
+        finish();
+        Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
+    }
+
+
 
     @Override
     public void onListItemClick(int clickedItemIndex) {

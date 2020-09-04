@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
     private MoviesAdapter.ListItemClickListener listener;
     private String BASE_URL = "https://api.themoviedb.org/3/movie/top_rated";
     private String POSTER_BASE_URL = "https://image.tmdb.org/t/p";
-    private String API_KEY = "fa000fe6accc8dfec66fd512859b4b60";
+    private String API_KEY = "API_KEY";
     private RecyclerView movies_rv;
     private MoviesAdapter movies_Adapter;
     MoviesDatabase moviesDatabase;
@@ -58,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
 
         if (BASE_URL.equals(getString(R.string.sort_favorite)) && moviesDatabase.movieDao().loadFavoriteMovies() != null) {
             movies = moviesDatabase.movieDao().loadFavoriteMovies();
-
-
 
 
         } else {
