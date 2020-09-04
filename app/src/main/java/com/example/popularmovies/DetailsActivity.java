@@ -77,12 +77,8 @@ public class DetailsActivity extends AppCompatActivity {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
 
         videos_rv.setLayoutManager(gridLayoutManager);
-
         videos_rv.setHasFixedSize(true);
-
         videosAdapter = new VideosAdapter(getBaseContext(), videos);
-
-
     }
 
     public void favoriteMovie(View view) {

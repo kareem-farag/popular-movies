@@ -2,9 +2,11 @@ package com.example.popularmovies.DataBase;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 @Entity(tableName = "movie")
-public class Movie {
+public class Movie implements Parcelable {
 
 
     @PrimaryKey(autoGenerate = true)
@@ -26,6 +28,33 @@ public class Movie {
         this.voteAverage = voteAverage;
         this.plotSynopsis = plotSynopsis;
         this.favorite = favorite;
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
+    protected Movie(Parcel in) {
+        databaseId = in.readInt();
+        id = in.readString();
+        title = in.readString();
+        moviePoster = in.readString();
+        releaseDate = in.readString();
+        if (in.readByte() == 0) {
+            voteAverage = null;
+        } else {
+            voteAverage = in.readDouble();
+        }
+        plotSynopsis = in.readString();
+        favorite = in.readString();
     }
 
     public int getDatabaseId() {
@@ -90,5 +119,27 @@ public class Movie {
 
     public void setFavorite(String favorite) {
         this.favorite = favorite;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(databaseId);
+        dest.writeString(id);
+        dest.writeString(title);
+        dest.writeString(moviePoster);
+        dest.writeString(releaseDate);
+        if (voteAverage == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(voteAverage);
+        }
+        dest.writeString(plotSynopsis);
+        dest.writeString(favorite);
     }
 }

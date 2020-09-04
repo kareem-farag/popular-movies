@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
 
             for (int i = 0; i < favoriteMovies.size(); i++) {
                 Movie movie = (Movie) favoriteMovies.get(i);
-
                 movies.put(Integer.valueOf(movie.getId()), movie.getMoviePoster());
             }
 
@@ -87,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
     private void changeUrlBasedOnSharedPreference(SharedPreferences sharedPreference) {
         if (sharedPreference.getString("sort_list", getString(R.string.sort_popularity)).equals(getString(R.string.sort_popularity))) {
             BASE_URL = "https://api.themoviedb.org/3/movie/popular";
-
         }
         if (sharedPreference.getString("sort_list", getString(R.string.sort_popularity)).equals(getString(R.string.sort_rating))) {
             BASE_URL = "https://api.themoviedb.org/3/movie/top_rated";
