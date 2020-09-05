@@ -18,6 +18,12 @@ public interface MovieDao {
     @Query("SELECT * FROM movie where favorite = 'true' ")
     List<Movie> loadFavoriteMovies();
 
+    @Query("SELECT * FROM movie WHERE id=:id")
+    Movie getMovieById(String id);
+
+    @Query("SELECT COUNT(id) FROM movie WHERE id=:id")
+    int checkMovieIsFavorite(String id);
+
 
     @Insert
     void insertMovie(Movie movie);
@@ -27,5 +33,8 @@ public interface MovieDao {
 
     @Delete
     void deleteMovie(Movie movie);
+
+    @Query("DELETE FROM movie WHERE id = :id")
+    void deleteById(String id);
 
 }

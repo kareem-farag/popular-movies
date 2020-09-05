@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +44,7 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
     public String posterPath;
     public Double ratings;
     private String BASE_URL = "https://api.themoviedb.org/3/movie/";
-    private String API_KEY = "API_KEY";
+    private String API_KEY = "fa000fe6accc8dfec66fd512859b4b60";
     private TextView title_tv;
     private TextView overview_tv;
     private TextView release_date_tv;
@@ -51,7 +52,7 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
     private TextView rating_tv;
     private RecyclerView videos_rv;
     private VideosAdapter videosAdapter;
-
+    private Button favoritButton;
     private MoviesDatabase moviesDatabase;
 
     @Override
@@ -59,11 +60,13 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+
         title_tv = findViewById(R.id.movie_title_tv);
         overview_tv = findViewById(R.id.movie_plot_tv);
         release_date_tv = findViewById(R.id.movie_release_date_tv);
         rating_tv = findViewById(R.id.movie_rating_tv);
         poster_iv = findViewById(R.id.movie_poster_iv);
+        favoritButton = findViewById(R.id.favorite_button_bv);
 
         moviesDatabase = MoviesDatabase.getInstance(getApplicationContext());
         movie = null;
@@ -79,6 +82,11 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
         overView = movie.getPlotSynopsis();
         posterPath = movie.getMoviePoster();
 
+
+        int isFavorite = moviesDatabase.movieDao().checkMovieIsFavorite(id);
+        if (isFavorite > 0) {
+            favoritButton.setText("Unfavorite");
+        }
         //FetchMovie fetchMovie = new FetchMovie();
         //fetchMovie.execute(id);
         movieUI(movie);
@@ -107,14 +115,19 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
     }
 
     public void favoriteMovie(View view) {
-        Movie movie = new Movie(id, title, posterPath, releaseDate, ratings, overView, "true");
-        try {
-            moviesDatabase.movieDao().insertMovie(movie);
-        } catch (Exception e) {
-            Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-
-
+        int isFavorite = moviesDatabase.movieDao().checkMovieIsFavorite(id);
+        if (isFavorite == 0) {
+            favoritButton.setText("Unfavorite");
+            Movie movie = new Movie(id, title, posterPath, releaseDate, ratings, overView, "true");
+            try {
+                moviesDatabase.movieDao().insertMovie(movie);
+            } catch (Exception e) {
+                Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        } else {
+            favoritButton.setText("Favorite");
+            moviesDatabase.movieDao().deleteById(id);
         }
     }
 
