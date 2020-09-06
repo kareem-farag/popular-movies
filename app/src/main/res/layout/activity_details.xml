@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
-        android:background="#F44336"
+        android:background="#722C27"
         android:padding="10dp"
         android:text="TextView"
         android:textColor="#fff"
@@ -78,7 +78,14 @@
         android:id="@+id/trailers_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="#FFEB3B" />
+        android:layout_weight="1">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/reviews_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 
 </LinearLayout>

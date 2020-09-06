@@ -8,18 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Map;
+import com.example.popularmovies.DataBase.Trailer;
+
+import java.util.List;
 
 public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.ViewHolder> {
     //    final private MoviesAdapter.ListItemClickListener mOnClickListener;
     final private ListItemClickListener vOnClickListener;
-
-    private Map<Integer, String> videosMap;
+    private List<Trailer> trailers;
     private Context context;
 
-    public VideosAdapter(Context c, Map<Integer, String> videos, ListItemClickListener listener) {
-        videosMap = videos;
+    public VideosAdapter(Context c, List<Trailer> trailersList, ListItemClickListener listener) {
+        trailers = trailersList;
         context = c;
         vOnClickListener = listener;
 
@@ -40,19 +40,18 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        int trailerNumber = 0;
-        trailerNumber++;
-        String trailerUrl = (new ArrayList<String>(videosMap.values())).get(i);
-        viewHolder.trailer_title_tv.setText("Trailer :" + trailerNumber);
-        //trailerUrl
+
+        Trailer trailer = trailers.get(i);
+        viewHolder.trailer_title_tv.setText(trailer.getTitle());
+
     }
 
     @Override
     public int getItemCount() {
-        if (videosMap == null) {
+        if (trailers == null) {
             return 0;
         } else {
-            return videosMap.size();
+            return trailers.size();
         }
     }
 

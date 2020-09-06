@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.example.popularmovies.DataBase.Movie;
 import com.example.popularmovies.DataBase.MoviesDatabase;
+import com.example.popularmovies.DataBase.Review;
+import com.example.popularmovies.DataBase.Trailer;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -31,7 +33,9 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class DetailsActivity extends AppCompatActivity implements VideosAdapter.ListItemClickListener {
     public LinkedHashMap<Integer, String> videos = new LinkedHashMap<Integer, String>();
@@ -51,9 +55,15 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
     private ImageView poster_iv;
     private TextView rating_tv;
     private RecyclerView videos_rv;
+    private RecyclerView reviews_rv;
     private VideosAdapter videosAdapter;
+    private ReviewsAdapter reviewsAdapter;
     private Button favoritButton;
     private MoviesDatabase moviesDatabase;
+
+    private List<Trailer> trailers = new ArrayList<Trailer>();
+    private List<Review> reviews = new ArrayList<Review>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,20 +97,28 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
         if (isFavorite > 0) {
             favoritButton.setText("Unfavorite");
         }
-        //FetchMovie fetchMovie = new FetchMovie();
-        //fetchMovie.execute(id);
+
         movieUI(movie);
 
         FetchMoviesVideos fetchMoviesVideos = new FetchMoviesVideos();
         fetchMoviesVideos.execute(movie.getId());
 
+        FetchMoviesReviews fetchMoviesReviews = new FetchMoviesReviews();
+        fetchMoviesReviews.execute(movie.getId());
 
         videos_rv = findViewById(R.id.trailers_rv);
+        reviews_rv = findViewById(R.id.reviews_rv);
+
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
 
         videos_rv.setLayoutManager(gridLayoutManager);
         videos_rv.setHasFixedSize(true);
-        videosAdapter = new VideosAdapter(getBaseContext(), videos, this);
+        videosAdapter = new VideosAdapter(getBaseContext(), trailers, this);
+
+        GridLayoutManager reviewGridLayoutManager = new GridLayoutManager(this, 1);
+        reviews_rv.setLayoutManager(reviewGridLayoutManager);
+        reviews_rv.setHasFixedSize(true);
+        reviewsAdapter = new ReviewsAdapter(getBaseContext(), reviews);
     }
 
     public static void watchYoutubeVideo(Context context, String id) {
@@ -179,24 +197,25 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
                 URL url = new URL(urlString);
                 URLConnection urlConnection = url.openConnection();
                 InputStream is = urlConnection.getInputStream();
-
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
                 StringBuffer stringBuffer = new StringBuffer();
                 String ln;
+
                 while ((ln = bufferedReader.readLine()) != null) {
                     stringBuffer.append(ln + "\n");
                 }
 
                 jsonObject = new JSONObject(stringBuffer.toString());
                 JSONArray jsonArray = jsonObject.getJSONArray("results");
-
                 JSONObject video;
+
+
                 for (int i = 0; i < jsonArray.length(); i++) {
                     video = jsonArray.getJSONObject(i);
-                    videos.put(i, video.getString("key"));
+
+                    Trailer trailer = new Trailer(video.getString("id"), video.getString("key"), video.getString("name"));
+                    trailers.add(trailer);
                 }
-
-
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -204,19 +223,68 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
             return null;
         }
 
         protected void onPostExecute(Void result) {
             videos_rv = findViewById(R.id.trailers_rv);
+
             //LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getBaseContext(),LinearLayoutManager.VERTICAL, false);
-
-
             try {
                 videos_rv.setAdapter(videosAdapter);
+//
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
 
+
+        }
+    }
+
+    protected class FetchMoviesReviews extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            JSONObject jsonObject = null;
+            String urlString = BASE_URL + strings[0] + "/reviews?api_key=" + API_KEY;
+            try {
+                URL url = new URL(urlString);
+                URLConnection urlConnection = url.openConnection();
+                InputStream is = urlConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
+                StringBuffer stringBuffer = new StringBuffer();
+                String ln;
+
+                while ((ln = bufferedReader.readLine()) != null) {
+                    stringBuffer.append(ln + "\n");
+                }
+
+                jsonObject = new JSONObject(stringBuffer.toString());
+                JSONArray jsonArray = jsonObject.getJSONArray("results");
+                JSONObject reviewObject;
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    reviewObject = jsonArray.getJSONObject(i);
+                    Review review = new Review(reviewObject.getString("id"), reviewObject.getString("author"), reviewObject.getString("content"));
+                    reviews.add(review);
+
+
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+            reviews_rv = findViewById(R.id.reviews_rv);
+            //LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getBaseContext(),LinearLayoutManager.VERTICAL, false);
+            try {
+                reviews_rv.setAdapter(reviewsAdapter);
 //
             } catch (NullPointerException e) {
                 e.printStackTrace();
