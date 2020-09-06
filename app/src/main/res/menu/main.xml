@@ -3,8 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/sort"
-        android:title="Sort"
-        app:showAsAction="always" />
+        android:id="@+id/top_rated_sort"
+        android:title="Top Rated "
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/popularity_sort"
+        android:title="Popularity"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/favorite_sort"
+        android:title="Favorite"
+        app:showAsAction="never" />
 
 </menu>

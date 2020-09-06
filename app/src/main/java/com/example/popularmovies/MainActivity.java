@@ -1,10 +1,13 @@
 package com.example.popularmovies;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -56,8 +59,17 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         changeUrlBasedOnSharedPreference(sharedPreference);
         moviesDatabase = MoviesDatabase.getInstance(getApplicationContext());
 
+        movies_Adapter = new MoviesAdapter(getBaseContext(), movies, this);
+
         if (BASE_URL.equals(getString(R.string.sort_favorite)) && moviesDatabase.movieDao().loadFavoriteMovies() != null) {
-            movies = moviesDatabase.movieDao().loadFavoriteMovies();
+            LiveData<List<Movie>> movies = moviesDatabase.movieDao().loadFavoriteMovies();
+            movies.observe(this, new Observer<List<Movie>>() {
+                @Override
+                public void onChanged(@Nullable List<Movie> movies) {
+                    movies_Adapter.setMovies(movies);
+                    //movies_rv.setAdapter(movies_Adapter);
+                }
+            });
 
 
         } else {
@@ -71,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
 
         movies_rv.setHasFixedSize(true);
 
-        movies_Adapter = new MoviesAdapter(getBaseContext(), movies, this);
 
         if (BASE_URL.equals(getString(R.string.sort_favorite)) && moviesDatabase.movieDao().loadFavoriteMovies() != null) {
             movies_rv.setAdapter(movies_Adapter);
@@ -107,13 +118,27 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.sort) {
-            Intent startSettingActivity = new Intent(this, SettingsActivity.class);
-            startActivity(startSettingActivity);
-            return true;
-        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.edit().clear();
+        Intent intent = getIntent();
 
-        return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.popularity_sort) {
+            sharedPreferences.edit().putString("sort_list", getString(R.string.sort_popularity)).apply();
+
+        }
+        if (item.getItemId() == R.id.top_rated_sort) {
+            sharedPreferences.edit().putString("sort_list", getString(R.string.sort_rating)).apply();
+
+        }
+        if (item.getItemId() == R.id.favorite_sort) {
+            sharedPreferences.edit().putString("sort_list", getString(R.string.sort_favorite)).apply();
+
+        }
+        finish();
+        startActivity(intent);
+
+        return true;
+        //return super.onOptionsItemSelected(item);
 
     }
 
