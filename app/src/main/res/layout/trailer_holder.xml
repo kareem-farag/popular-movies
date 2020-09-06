@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/trailer_holder"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_margin="10dp">
 
     <ImageView
+        android:id="@+id/trailer_thumb_iv"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:background="#003F3939"
 
-        app:srcCompat="@android:drawable/ic_media_play" />
-
-    <TextView
-        android:id="@+id/trailer_title_tv"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_weight="1" />
+        android:background="#003F3939" />
 
 </LinearLayout>

@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -65,6 +66,18 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
     private List<Review> reviews = new ArrayList<Review>();
 
 
+    public static void watchYoutubeVideo(Context context, Trailer trailer) {
+        String id = trailer.getYoutubeId();
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + id));
+        try {
+            context.startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            context.startActivity(webIntent);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,9 +122,9 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
         videos_rv = findViewById(R.id.trailers_rv);
         reviews_rv = findViewById(R.id.reviews_rv);
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 
-        videos_rv.setLayoutManager(gridLayoutManager);
+        videos_rv.setLayoutManager(linearLayoutManager);
         videos_rv.setHasFixedSize(true);
         videosAdapter = new VideosAdapter(getBaseContext(), trailers, this);
 
@@ -121,22 +134,12 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
         reviewsAdapter = new ReviewsAdapter(getBaseContext(), reviews);
     }
 
-    public static void watchYoutubeVideo(Context context, String id) {
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
-        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://www.youtube.com/watch?v=" + id));
-        try {
-            context.startActivity(appIntent);
-        } catch (ActivityNotFoundException ex) {
-            context.startActivity(webIntent);
-        }
-    }
-
     public void favoriteMovie(View view) {
         int isFavorite = moviesDatabase.movieDao().checkMovieIsFavorite(id);
         if (isFavorite == 0) {
             favoritButton.setText("Unfavorite");
             Movie movie = new Movie(id, title, posterPath, releaseDate, ratings, overView, "true");
+
             try {
                 moviesDatabase.movieDao().insertMovie(movie);
             } catch (Exception e) {
@@ -158,7 +161,7 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        watchYoutubeVideo(this, videos.get(clickedItemIndex));
+        watchYoutubeVideo(this, trailers.get(clickedItemIndex));
 
     }
 
