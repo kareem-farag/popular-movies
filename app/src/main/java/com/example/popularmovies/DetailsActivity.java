@@ -38,6 +38,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class DetailsActivity extends AppCompatActivity implements VideosAdapter.ListItemClickListener {
     public LinkedHashMap<Integer, String> videos = new LinkedHashMap<Integer, String>();
     public Movie movie;
@@ -50,21 +53,29 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
     public Double ratings;
     private String BASE_URL = "https://api.themoviedb.org/3/movie/";
     private String API_KEY = "fa000fe6accc8dfec66fd512859b4b60";
-    private TextView title_tv;
-    private TextView overview_tv;
-    private TextView release_date_tv;
-    private ImageView poster_iv;
-    private TextView rating_tv;
-    private RecyclerView videos_rv;
-    private RecyclerView reviews_rv;
+    @BindView(R.id.movie_title_tv)
+    TextView title_tv;
+    @BindView(R.id.movie_plot_tv)
+    TextView overview_tv;
+    @BindView(R.id.movie_release_date_tv)
+    TextView release_date_tv;
+    @BindView(R.id.movie_poster_iv)
+    ImageView poster_iv;
+    @BindView(R.id.movie_rating_tv)
+    TextView rating_tv;
+    @BindView(R.id.trailers_rv)
+    RecyclerView videos_rv;
+    @BindView(R.id.reviews_rv)
+    RecyclerView reviews_rv;
+    @BindView(R.id.favorite_button_bv)
+    Button favoritButton;
     private VideosAdapter videosAdapter;
     private ReviewsAdapter reviewsAdapter;
-    private Button favoritButton;
+
     private MoviesDatabase moviesDatabase;
 
     private List<Trailer> trailers = new ArrayList<Trailer>();
     private List<Review> reviews = new ArrayList<Review>();
-
 
     public static void watchYoutubeVideo(Context context, Trailer trailer) {
         String id = trailer.getYoutubeId();
@@ -83,13 +94,8 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        ButterKnife.bind(this);
 
-        title_tv = findViewById(R.id.movie_title_tv);
-        overview_tv = findViewById(R.id.movie_plot_tv);
-        release_date_tv = findViewById(R.id.movie_release_date_tv);
-        rating_tv = findViewById(R.id.movie_rating_tv);
-        poster_iv = findViewById(R.id.movie_poster_iv);
-        favoritButton = findViewById(R.id.favorite_button_bv);
 
         moviesDatabase = MoviesDatabase.getInstance(getApplicationContext());
         movie = null;
@@ -119,8 +125,6 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
         FetchMoviesReviews fetchMoviesReviews = new FetchMoviesReviews();
         fetchMoviesReviews.execute(movie.getId());
 
-        videos_rv = findViewById(R.id.trailers_rv);
-        reviews_rv = findViewById(R.id.reviews_rv);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 
@@ -165,8 +169,7 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
 
     }
 
-    private void movieUI(Movie movie) {
-
+    public void movieUI(Movie movie) {
 
         title_tv.setText(title);
         overview_tv.setText(overView);
