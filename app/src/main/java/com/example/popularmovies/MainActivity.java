@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
             getMovies.execute(BASE_URL + "?api_key=" + API_KEY);
         }
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, ResponsiveLayout.calculateNoOfColumns(this));
 
         movies_rv.setLayoutManager(gridLayoutManager);
 
@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
             movies_rv.setAdapter(movies_Adapter);
         }
     }
+
 
     private void changeUrlBasedOnSharedPreference(SharedPreferences sharedPreference) {
         if (sharedPreference.getString("sort_list", getString(R.string.sort_popularity)).equals(getString(R.string.sort_popularity))) {

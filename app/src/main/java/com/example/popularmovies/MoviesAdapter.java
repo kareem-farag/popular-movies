@@ -28,6 +28,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.viewHolder
 
     }
 
+    public void setMovies(List<Movie> movies) {
+        moviesMap = movies;
+    }
+
     @NonNull
     @Override
     public viewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
