@@ -2,6 +2,7 @@ package com.example.popularmovies;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
     private String POSTER_BASE_URL = "https://image.tmdb.org/t/p";
     private String API_KEY = "fa000fe6accc8dfec66fd512859b4b60";
     private RecyclerView movies_rv;
-    private MoviesAdapter movies_Adapter;
+    private MoviesAdapter moviesAdapter;
     MoviesDatabase moviesDatabase;
 
     @Override
@@ -59,19 +60,19 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         changeUrlBasedOnSharedPreference(sharedPreference);
         moviesDatabase = MoviesDatabase.getInstance(getApplicationContext());
 
-        movies_Adapter = new MoviesAdapter(getBaseContext(), movies, this);
+
+        moviesAdapter = new MoviesAdapter(getBaseContext(), movies, this);
 
         if (BASE_URL.equals(getString(R.string.sort_favorite)) && moviesDatabase.movieDao().loadFavoriteMovies() != null) {
+            setupViewModel();
             LiveData<List<Movie>> movies = moviesDatabase.movieDao().loadFavoriteMovies();
             movies.observe(this, new Observer<List<Movie>>() {
                 @Override
                 public void onChanged(@Nullable List<Movie> movies) {
-                    movies_Adapter.setMovies(movies);
-                    //movies_rv.setAdapter(movies_Adapter);
+                    moviesAdapter.setMovies(movies);
+                    //movies_rv.setAdapter(moviesAdapter);
                 }
             });
-
-
         } else {
             GetMovies getMovies = new GetMovies();
             getMovies.execute(BASE_URL + "?api_key=" + API_KEY);
@@ -85,8 +86,18 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
 
 
         if (BASE_URL.equals(getString(R.string.sort_favorite)) && moviesDatabase.movieDao().loadFavoriteMovies() != null) {
-            movies_rv.setAdapter(movies_Adapter);
+            movies_rv.setAdapter(moviesAdapter);
         }
+    }
+
+    private void setupViewModel() {
+        MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mainViewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                moviesAdapter.setMovies(movies);
+            }
+        });
     }
 
 
@@ -146,7 +157,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
     @Override
     public void onListItemClick(int clickedItemIndex) {
         Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra("movie", movies.get(clickedItemIndex));
+
+        intent.putExtra("movie", moviesAdapter.getMovieById(clickedItemIndex));
         startActivity(intent);
     }
 
@@ -216,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
 
 
             try {
-                movies_rv.setAdapter(movies_Adapter);
+                movies_rv.setAdapter(moviesAdapter);
 
 //
             } catch (NullPointerException e) {

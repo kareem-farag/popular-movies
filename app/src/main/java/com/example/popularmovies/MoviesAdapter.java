@@ -30,6 +30,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.viewHolder
 
     public void setMovies(List<Movie> movies) {
         moviesMap = movies;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -84,6 +85,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.viewHolder
 
     public interface ListItemClickListener {
         void onListItemClick(int clickedItemIndex);
+    }
+
+    public Movie getMovieById(int id) {
+        return moviesMap.get(id);
+
     }
 
     public class viewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
