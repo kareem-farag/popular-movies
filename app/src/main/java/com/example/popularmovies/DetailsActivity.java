@@ -52,7 +52,7 @@ public class DetailsActivity extends AppCompatActivity implements VideosAdapter.
     public String posterPath;
     public Double ratings;
     private String BASE_URL = "https://api.themoviedb.org/3/movie/";
-    private String API_KEY = "fa000fe6accc8dfec66fd512859b4b60";
+    private String API_KEY = "API_KEY";
     @BindView(R.id.movie_title_tv)
     TextView title_tv;
     @BindView(R.id.movie_plot_tv)
